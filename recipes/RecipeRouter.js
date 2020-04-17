@@ -16,6 +16,17 @@ router.get("/", (req, res) => {
     });
 });
 
+router.get("/:id", (req, res) => {
+  const { id } = req.params;
+  Recipes.getRecipesById({ id })
+    .then((recipe) => {
+      res.status(200).json(recipe);
+    })
+    .catch((error) => {
+      res.status(500).json({ error: "server error" });
+    });
+});
+
 router.get("/:id/ingredients", (req, res) => {
   const { id } = req.params;
   Recipes.getShoppingList(id)
@@ -23,11 +34,9 @@ router.get("/:id/ingredients", (req, res) => {
       if (ingredients.length) {
         res.status(200).json(ingredients);
       } else {
-        res
-          .status(404)
-          .json({
-            error: `The recipe with an ID of ${id} has no ingredients associated with it`,
-          });
+        res.status(404).json({
+          error: `The recipe with an ID of ${id} has no ingredients associated with it`,
+        });
       }
     })
     .catch((error) => {
@@ -45,7 +54,7 @@ router.get("/:id/instructions", (req, res) => {
       if (instructions.length) {
         res.status(200).json(instructions);
       } else {
-        res.status(500).json({
+        res.status(404).json({
           error: `There were no instructions found for the recipe with ID ${id}`,
         });
       }
